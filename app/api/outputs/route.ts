@@ -6,25 +6,40 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { createServiceClient } from '@/lib/supabase';
 
-export async function POST(req: NextRequest) {
-  let body: {
-    output_type: string;
-    audience_id: string;
-    title: string;
-    content: Record<string, unknown>;
-    rya_score: number | null;
-    rya_rationale: string | null;
-    channel: string | null;
-    genre_signals_used: Record<string, unknown>[];
-  };
+const outputBodySchema = z.object({
+  output_type: z.enum(['campaign_concept', 'persona']),
+  audience_id: z.string().uuid(),
+  title: z.string().min(1),
+  content: z.record(z.string(), z.unknown()),
+  rya_score: z.number().int().min(1).max(10).nullable(),
+  rya_rationale: z.string().nullable(),
+  channel: z.string().nullable(),
+  genre_signals_used: z.array(
+    z.object({
+      genre_name: z.string(),
+      avg_score: z.number(),
+    })
+  ),
+});
 
+export async function POST(req: NextRequest) {
+  let body: unknown;
   try {
     body = await req.json();
   } catch {
     return NextResponse.json(
       { error: 'invalid_json', detail: 'Request body must be valid JSON' },
+      { status: 400 }
+    );
+  }
+
+  const parsed = outputBodySchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: 'validation_error', detail: 'Invalid request format' },
       { status: 400 }
     );
   }
@@ -38,14 +53,7 @@ export async function POST(req: NextRequest) {
     rya_rationale,
     channel,
     genre_signals_used,
-  } = body;
-
-  if (!output_type || !audience_id || !title || !content || !genre_signals_used) {
-    return NextResponse.json(
-      { error: 'missing_field', detail: 'Required fields: output_type, audience_id, title, content, genre_signals_used' },
-      { status: 400 }
-    );
-  }
+  } = parsed.data;
 
   const supabase = createServiceClient();
 

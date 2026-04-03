@@ -94,6 +94,7 @@ export function GeneratePanel({
   const [brief, setBrief] = useState('');
   const [output, setOutput] = useState<GeneratedOutput | null>(null);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
 
   // Loading phrase rotation
   const [phraseIndex, setPhraseIndex] = useState(
@@ -178,6 +179,7 @@ export function GeneratePanel({
   const handleSave = useCallback(async () => {
     if (!output) return;
     setSaving(true);
+    setSaveError('');
 
     try {
       const res = await fetch('/api/outputs', {
@@ -190,7 +192,11 @@ export function GeneratePanel({
         onSaved();
         router.refresh();
         onClose();
+      } else {
+        setSaveError('Failed to save. Please try again.');
       }
+    } catch {
+      setSaveError('Failed to save. Please try again.');
     } finally {
       setSaving(false);
     }
@@ -421,6 +427,9 @@ export function GeneratePanel({
 
         {/* Actions */}
         <div className="flex flex-col gap-2 pt-2">
+          {saveError && (
+            <p className="text-xs text-red-500">{saveError}</p>
+          )}
           <button
             onClick={handleSave}
             disabled={saving}

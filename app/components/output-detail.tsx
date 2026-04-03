@@ -82,7 +82,9 @@ function RYABar({ score }: { score: number }) {
 export function OutputDetail({ output, audience }: OutputDetailProps) {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
   const [generatingImage, setGeneratingImage] = useState(false);
+  const [imageError, setImageError] = useState('');
   const [imagePhraseIndex, setImagePhraseIndex] = useState(
     () => Math.floor(Math.random() * IMAGE_LOADING_PHRASES.length)
   );
@@ -108,12 +110,17 @@ export function OutputDetail({ output, audience }: OutputDetailProps) {
   const handleDelete = useCallback(async () => {
     if (!confirm('Delete this output? This cannot be undone.')) return;
     setDeleting(true);
+    setDeleteError('');
     try {
       const res = await fetch(`/api/outputs/${output.id}`, { method: 'DELETE' });
       if (res.ok) {
         router.push('/concepts');
         router.refresh();
+      } else {
+        setDeleteError('Failed to delete. Please try again.');
       }
+    } catch {
+      setDeleteError('Failed to delete. Please try again.');
     } finally {
       setDeleting(false);
     }
@@ -121,6 +128,7 @@ export function OutputDetail({ output, audience }: OutputDetailProps) {
 
   const handleGenerateCardImage = useCallback(async () => {
     setGeneratingImage(true);
+    setImageError('');
     try {
       const res = await fetch('/api/generate/card-image', {
         method: 'POST',
@@ -129,7 +137,11 @@ export function OutputDetail({ output, audience }: OutputDetailProps) {
       });
       if (res.ok) {
         router.refresh();
+      } else {
+        setImageError('Failed to generate image. Please try again.');
       }
+    } catch {
+      setImageError('Failed to generate image. Please try again.');
     } finally {
       setGeneratingImage(false);
     }
@@ -195,6 +207,10 @@ export function OutputDetail({ output, audience }: OutputDetailProps) {
           </button>
         </div>
       </div>
+
+      {(deleteError || imageError) && (
+        <p className="text-xs text-red-500 mt-1">{deleteError || imageError}</p>
+      )}
 
       <p className="text-xs text-muted-foreground mb-6">
         Generated {new Date(output.created_at).toLocaleDateString('en-US', {

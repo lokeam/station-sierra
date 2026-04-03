@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { createServiceClient } from '@/lib/supabase';
-import { OutputDetail } from '../../components/output-detail';
+import { OutputDetail } from '../../../components/output-detail';
 
 interface ConceptDetailPageProps {
   params: Promise<{ id: string }>;

@@ -9,6 +9,8 @@
  * Response: 200 saved output | 404 audience not found | 422 evals exhausted | 500 db error
  */
 
+export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';

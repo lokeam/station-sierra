@@ -5,6 +5,8 @@
  * Accepts the same payload shape returned by the generate routes.
  */
 
+export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createServiceClient } from '@/lib/supabase';

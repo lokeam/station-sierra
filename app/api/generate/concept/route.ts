@@ -17,6 +17,8 @@
  * and image-tag CSRF vectors ineffective against these endpoints.
  */
 
+export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';

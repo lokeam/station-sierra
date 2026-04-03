@@ -52,10 +52,10 @@ All views share the App Shell (Mockup 1)
 
 ```
 +------------------------------------------------------------------+
-|  [≡] RYA Lite                                    [●] Light/Dark  |
+|  [≡] Station Sierra                              [●] Light/Dark  |
 +------------------+-----------------------------------------------+
 |                  |                                               |
-|  NAVIGATION      |   MAIN CONTENT AREA                          |
+|  NAVIGATION      |   MAIN CONTENT AREA                           |
 |                  |   (changes per view)                          |
 |  [👥] Respondents|                                               |
 |                  |                                               |

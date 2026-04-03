@@ -2,6 +2,8 @@
  * DELETE /api/outputs/[id] — delete a saved output.
  */
 
+export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { createServiceClient } from '@/lib/supabase';
 

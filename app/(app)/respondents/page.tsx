@@ -1,5 +1,5 @@
 import { createServiceClient } from "@/lib/supabase";
-import { RespondentExplorer } from "../components/respondent-explorer";
+import { RespondentExplorer } from "../../components/respondent-explorer";
 
 export default async function RespondentsPage() {
   const supabase = createServiceClient();

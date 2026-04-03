@@ -24,7 +24,7 @@ export function Sidebar({ respondentCount, genreCount }: SidebarProps) {
       <div className="flex items-center justify-between px-4 h-14 border-b border-border">
         <div className="flex items-center gap-2">
           <Logo />
-          <span className="font-semibold text-sm tracking-tight">RYA Lite</span>
+          <span className="font-semibold text-sm tracking-tight">Station Sierra</span>
         </div>
         <ThemeToggle />
       </div>

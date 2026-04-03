@@ -1,5 +1,5 @@
 import { createServiceClient } from '@/lib/supabase';
-import { AudienceList } from '../components/audience-list';
+import { AudienceList } from '../../components/audience-list';
 
 export default async function AudiencesPage() {
   const supabase = createServiceClient();

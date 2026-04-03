@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import { createServiceClient } from '@/lib/supabase';
 import { getGenreSignals, getPopulationAverages, computeDeltas } from '@/lib/genre-signals';
-import { AudienceDetail } from '../../components/audience-detail';
+import { AudienceDetail } from '../../../components/audience-detail';
 import type { InterestRow, GenreInfo } from '@/lib/types';
 
 interface Props {

@@ -1,6 +1,6 @@
 import { createServiceClient } from '@/lib/supabase';
 import { getGenreSignals } from '@/lib/genre-signals';
-import { ConceptsList } from '../components/concepts-list';
+import { ConceptsList } from '../../components/concepts-list';
 import type { InterestRow, GenreInfo } from '@/lib/types';
 
 interface ConceptsPageProps {

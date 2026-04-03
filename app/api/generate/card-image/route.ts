@@ -11,6 +11,8 @@
  * Response: 200 updated saved_output | 400 missing field | 404 not found | 500 error
  */
 
+export const runtime = 'nodejs';
+
 import { NextRequest, NextResponse } from 'next/server';
 import { openai } from '@ai-sdk/openai';
 import { generateObject, generateImage } from 'ai';

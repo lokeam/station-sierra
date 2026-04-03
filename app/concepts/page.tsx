@@ -11,12 +11,7 @@ export default async function ConceptsPage({ searchParams }: ConceptsPageProps) 
   const params = await searchParams;
   const supabase = createServiceClient();
 
-  const [
-    { data: savedOutputs },
-    { data: audiences },
-    { data: genres },
-    { data: interests },
-  ] = await Promise.all([
+  const [outputsResult, audiencesResult, genresResult, interestsResult] = await Promise.all([
     supabase
       .from('saved_outputs')
       .select('id, output_type, audience_id, title, content, rya_score, channel, card_image_url, created_at')
@@ -33,12 +28,20 @@ export default async function ConceptsPage({ searchParams }: ConceptsPageProps) 
       .select('respondent_id, genre_slug, interest_level'),
   ]);
 
+  if (outputsResult.error || audiencesResult.error || genresResult.error || interestsResult.error) {
+    throw new Error("Failed to load concepts data");
+  }
+
+  const audiences = audiencesResult.data;
+  const genres = genresResult.data;
+  const interests = interestsResult.data;
+
   // Build audience lookup for names + top signals
-  const audienceOptions = (audiences ?? []).map((a) => {
+  const audienceOptions = audiences.map((a) => {
     const signals = getGenreSignals(
       a.respondent_ids as number[],
-      (interests ?? []) as InterestRow[],
-      (genres ?? []) as GenreInfo[]
+      interests as InterestRow[],
+      genres as GenreInfo[]
     );
     return {
       id: a.id as string,
@@ -49,10 +52,10 @@ export default async function ConceptsPage({ searchParams }: ConceptsPageProps) 
   });
 
   const audienceNameMap = new Map(
-    (audiences ?? []).map((a) => [a.id, a.name as string])
+    audiences.map((a) => [a.id, a.name as string])
   );
 
-  const outputsWithAudience = (savedOutputs ?? []).map((o) => ({
+  const outputsWithAudience = (outputsResult.data).map((o) => ({
     ...o,
     audience_name: audienceNameMap.get(o.audience_id) ?? 'Unknown',
   }));

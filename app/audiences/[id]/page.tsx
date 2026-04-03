@@ -12,12 +12,7 @@ export default async function AudienceDetailPage({ params }: Props) {
   const { id } = await params;
   const supabase = createServiceClient();
 
-  const [
-    { data: audience },
-    { data: genres },
-    { data: interests },
-    { data: savedOutputs },
-  ] = await Promise.all([
+  const [audienceResult, genresResult, interestsResult, outputsResult] = await Promise.all([
     supabase.from('audiences').select('*').eq('id', id).single(),
     supabase.from('genres').select('genre_slug, genre_name, genre_categories').order('genre_name'),
     supabase.from('respondent_genre_interest').select('respondent_id, genre_slug, interest_level'),
@@ -28,10 +23,14 @@ export default async function AudienceDetailPage({ params }: Props) {
       .order('created_at', { ascending: false }),
   ]);
 
-  if (!audience) notFound();
+  if (audienceResult.error || !audienceResult.data) notFound();
+  if (genresResult.error || interestsResult.error || outputsResult.error) {
+    throw new Error("Failed to load audience detail data");
+  }
 
-  const allInterests = (interests ?? []) as InterestRow[];
-  const allGenres = (genres ?? []) as GenreInfo[];
+  const audience = audienceResult.data;
+  const allInterests = interestsResult.data as InterestRow[];
+  const allGenres = genresResult.data as GenreInfo[];
 
   const segmentSignals = getGenreSignals(audience.respondent_ids, allInterests, allGenres);
   const populationSignals = getPopulationAverages(allInterests, allGenres);
@@ -42,7 +41,7 @@ export default async function AudienceDetailPage({ params }: Props) {
       audience={audience}
       deltas={deltas}
       segmentSignals={segmentSignals}
-      savedOutputs={savedOutputs ?? []}
+      savedOutputs={outputsResult.data}
     />
   );
 }

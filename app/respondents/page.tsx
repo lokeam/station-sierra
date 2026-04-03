@@ -4,11 +4,7 @@ import { RespondentExplorer } from "../components/respondent-explorer";
 export default async function RespondentsPage() {
   const supabase = createServiceClient();
 
-  const [
-    { data: respondents },
-    { data: genres },
-    { data: interests },
-  ] = await Promise.all([
+  const [respondentsResult, genresResult, interestsResult] = await Promise.all([
     supabase.from("respondents").select("respondent_id").order("respondent_id"),
     supabase.from("genres").select("genre_slug, genre_name").order("genre_name"),
     supabase
@@ -16,13 +12,19 @@ export default async function RespondentsPage() {
       .select("respondent_id, genre_slug, interest_level"),
   ]);
 
-  const respondentIds = (respondents ?? []).map((r) => r.respondent_id);
+  if (respondentsResult.error || genresResult.error || interestsResult.error) {
+    throw new Error("Failed to load respondent data");
+  }
+
+  const respondentIds = respondentsResult.data.map((r) => r.respondent_id);
+  const genres = genresResult.data;
+  const interests = interestsResult.data;
 
   return (
     <RespondentExplorer
       respondentIds={respondentIds}
-      genres={genres ?? []}
-      interests={interests ?? []}
+      genres={genres}
+      interests={interests}
     />
   );
 }

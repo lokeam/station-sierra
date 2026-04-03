@@ -20,15 +20,19 @@ export const metadata: Metadata = {
 };
 
 async function getCounts() {
-  const supabase = createServiceClient();
-  const [{ count: respondentCount }, { count: genreCount }] = await Promise.all([
-    supabase.from("respondents").select("*", { count: "exact", head: true }),
-    supabase.from("genres").select("*", { count: "exact", head: true }),
-  ]);
-  return {
-    respondentCount: respondentCount ?? 0,
-    genreCount: genreCount ?? 0,
-  };
+  try {
+    const supabase = createServiceClient();
+    const [respondentsResult, genresResult] = await Promise.all([
+      supabase.from("respondents").select("*", { count: "exact", head: true }),
+      supabase.from("genres").select("*", { count: "exact", head: true }),
+    ]);
+    return {
+      respondentCount: respondentsResult.error ? 0 : (respondentsResult.count ?? 0),
+      genreCount: genresResult.error ? 0 : (genresResult.count ?? 0),
+    };
+  } catch {
+    return { respondentCount: 0, genreCount: 0 };
+  }
 }
 
 export default async function RootLayout({

@@ -119,13 +119,16 @@ export async function POST(req: NextRequest) {
 
       const genreSignalsText = formatGenreSignals(genreSignals);
 
-      // Sanitize brief (attempt 1 only)
+      // Sanitize brief and brand_name (attempt 1 only)
       const briefResult = brief ? sanitizeBrief(brief) : null;
       const safeBrief = briefResult?.sanitized ?? '';
-      const brandText = brand_name ?? '';
+      const brandResult = brand_name ? sanitizeBrief(brand_name) : null;
+      const brandText = brandResult?.sanitized ?? '';
 
       span.setAttribute('security.brief_sanitized', briefResult?.wasSanitized ?? false);
       span.setAttribute('security.patterns_matched', briefResult?.matched ?? 0);
+      span.setAttribute('security.brand_name_sanitized', brandResult?.wasSanitized ?? false);
+      span.setAttribute('security.brand_name_patterns_matched', brandResult?.matched ?? 0);
 
       let lastOutput: Record<string, unknown> | null = null;
       let lastFailedEval: string | null = null;

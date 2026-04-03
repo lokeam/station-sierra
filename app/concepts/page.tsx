@@ -19,7 +19,7 @@ export default async function ConceptsPage({ searchParams }: ConceptsPageProps) 
   ] = await Promise.all([
     supabase
       .from('saved_outputs')
-      .select('id, output_type, audience_id, title, content, rya_score, channel, created_at')
+      .select('id, output_type, audience_id, title, content, rya_score, channel, card_image_url, created_at')
       .order('created_at', { ascending: false }),
     supabase
       .from('audiences')

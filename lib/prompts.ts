@@ -188,6 +188,39 @@ Do not change any other field.
 Return the complete JSON output with the corrected rya_score.`;
 }
 
+/** System prompt for gpt-4o-mini when writing DALL-E 3 prompts. */
+export function cardImageSystemPrompt(): string {
+  return `You write concise DALL-E 3 prompts for marketing card images. Output only the prompt, no explanation. Keep it under 200 words. Avoid text/words in the image.`;
+}
+
+/** Builds the user prompt for gpt-4o-mini to write a DALL-E 3 image prompt. */
+export function cardImageUserPrompt(
+  outputType: string,
+  content: Record<string, unknown>,
+  genreSignals: Array<{ genre_name: string; avg_score: number }>
+): string {
+  const signalsText = genreSignals
+    .map((g) => `${g.genre_name} (${g.avg_score.toFixed(1)})`)
+    .join(', ');
+
+  if (outputType === 'persona') {
+    return `Write a DALL-E 3 prompt for a marketing card image representing this audience persona.
+
+PERSONA NAME: ${content.persona_name}
+WHO THEY ARE: ${content.who_they_are}
+WHAT THEY CARE ABOUT: ${(content.what_they_care_about as string[]).join('; ')}
+CREATIVE DIRECTION: ${content.creative_direction}
+GENRE SIGNALS: ${signalsText}`;
+  }
+
+  return `Write a DALL-E 3 prompt for a marketing card image representing this campaign concept.
+
+TITLE: ${content.title}
+CONCEPT: ${content.concept}
+CHANNEL: ${content.channel}
+GENRE SIGNALS: ${signalsText}`;
+}
+
 /** Dispatches to the appropriate refinement prompt based on which eval failed. */
 export function getRefinementPrompt(
   failedEval: string,

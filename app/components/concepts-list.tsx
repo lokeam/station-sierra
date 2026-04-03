@@ -20,6 +20,7 @@ interface SavedOutputRow {
   rya_score: number | null;
   channel: string | null;
   content: Record<string, unknown>;
+  card_image_url: string | null;
   created_at: string;
   audience_name: string;
 }
@@ -146,8 +147,18 @@ export function ConceptsList({
               <Link
                 key={row.id}
                 href={`/concepts/${row.id}`}
-                className="border border-border rounded-lg p-5 hover:border-primary/30 transition-colors bg-background"
+                className="border border-border rounded-lg overflow-hidden hover:border-primary/30 transition-colors bg-background"
               >
+                {/* Card image thumbnail */}
+                {row.card_image_url && (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={row.card_image_url}
+                    alt=""
+                    className="w-full h-32 object-cover"
+                  />
+                )}
+                <div className={row.card_image_url ? 'p-5 pt-3' : 'p-5'}>
                 {/* Type badge */}
                 <div className="flex items-center justify-between mb-3">
                   <span
@@ -179,6 +190,7 @@ export function ConceptsList({
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   {row.channel && <span>{row.channel}</span>}
                   <span>{formatRelativeTime(row.created_at)}</span>
+                </div>
                 </div>
               </Link>
             ))}

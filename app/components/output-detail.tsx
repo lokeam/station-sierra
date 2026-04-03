@@ -1,9 +1,32 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { GenreSignal, FilterDefinition } from '@/lib/types';
+
+const IMAGE_LOADING_PHRASES = [
+  'Painting pixels...',
+  'Bribing the GPU...',
+  'Asking DALL-E nicely...',
+  'Squinting artistically...',
+  'Hallucinating beautifully...',
+  'Mixing digital paint...',
+  'Consulting the void...',
+  'Manifesting vibes...',
+  'Dreaming it up...',
+  'Summoning the muse...',
+  'Rendering feelings...',
+  'Doing art things...',
+  "Chef's kiss incoming...",
+  'Making stuff up...',
+  'Absolutely winging it...',
+  'Vibes \u2192 pixels...',
+  'Cooking something weird...',
+  'Sprinkling GPU dust...',
+  'Convincing electrons...',
+  'Almost definitely working...',
+];
 
 interface SavedOutput {
   id: string;
@@ -15,6 +38,8 @@ interface SavedOutput {
   rya_rationale: string | null;
   channel: string | null;
   genre_signals_used: GenreSignal[];
+  card_image_url: string | null;
+  card_image_prompt: string | null;
   created_at: string;
 }
 
@@ -57,6 +82,25 @@ function RYABar({ score }: { score: number }) {
 export function OutputDetail({ output, audience }: OutputDetailProps) {
   const router = useRouter();
   const [deleting, setDeleting] = useState(false);
+  const [generatingImage, setGeneratingImage] = useState(false);
+  const [imagePhraseIndex, setImagePhraseIndex] = useState(
+    () => Math.floor(Math.random() * IMAGE_LOADING_PHRASES.length)
+  );
+  const [imageFadeIn, setImageFadeIn] = useState(true);
+
+  useEffect(() => {
+    if (!generatingImage) return;
+
+    const phraseTimer = setInterval(() => {
+      setImageFadeIn(false);
+      setTimeout(() => {
+        setImagePhraseIndex((prev) => prev + 1);
+        setImageFadeIn(true);
+      }, 300);
+    }, 2500);
+
+    return () => clearInterval(phraseTimer);
+  }, [generatingImage]);
 
   const isConcept = output.output_type === 'campaign_concept';
   const content = output.content;
@@ -72,6 +116,22 @@ export function OutputDetail({ output, audience }: OutputDetailProps) {
       }
     } finally {
       setDeleting(false);
+    }
+  }, [output.id, router]);
+
+  const handleGenerateCardImage = useCallback(async () => {
+    setGeneratingImage(true);
+    try {
+      const res = await fetch('/api/generate/card-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ output_id: output.id }),
+      });
+      if (res.ok) {
+        router.refresh();
+      }
+    } finally {
+      setGeneratingImage(false);
     }
   }, [output.id, router]);
 
@@ -107,13 +167,33 @@ export function OutputDetail({ output, audience }: OutputDetailProps) {
             </Link>
           )}
         </div>
-        <button
-          onClick={handleDelete}
-          disabled={deleting}
-          className="text-xs text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
-        >
-          {deleting ? 'Deleting...' : 'Delete'}
-        </button>
+        <div className="flex items-center gap-3">
+          {generatingImage ? (
+            <span
+              className={`shine-text text-sm font-bold transition-opacity duration-300 ${
+                imageFadeIn ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
+              {IMAGE_LOADING_PHRASES[imagePhraseIndex % IMAGE_LOADING_PHRASES.length]}
+            </span>
+          ) : (
+            <button
+              onClick={handleGenerateCardImage}
+              className="text-xs text-muted-foreground hover:text-primary transition-colors"
+            >
+              {output.card_image_url
+                ? 'Regenerate Card Image'
+                : 'Generate Card Image'}
+            </button>
+          )}
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className="text-xs text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
+          >
+            {deleting ? 'Deleting...' : 'Delete'}
+          </button>
+        </div>
       </div>
 
       <p className="text-xs text-muted-foreground mb-6">
@@ -123,6 +203,31 @@ export function OutputDetail({ output, audience }: OutputDetailProps) {
           day: 'numeric',
         })}
       </p>
+
+      {/* Card Image */}
+      {output.card_image_url && (
+        <section className="mb-8">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+            Card Image
+          </h2>
+          <div className="border border-border rounded-lg overflow-hidden bg-background">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={output.card_image_url}
+              alt={`Card image for ${output.title}`}
+              className="w-full max-w-md"
+            />
+            {output.card_image_prompt && (
+              <div className="p-4 border-t border-border">
+                <p className="text-xs font-medium text-muted-foreground mb-1">DALL-E Prompt</p>
+                <p className="text-xs text-muted-foreground italic leading-relaxed">
+                  {output.card_image_prompt}
+                </p>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* Content */}
       {isConcept ? (

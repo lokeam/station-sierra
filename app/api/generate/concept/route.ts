@@ -37,7 +37,7 @@ import type {
 const MAX_ATTEMPTS = 3;
 
 export async function POST(req: NextRequest) {
-  let body: { audience_id?: string; brand_name?: string; brief?: string };
+  let body: { audience_id?: string; brand_name?: string; brief?: string; auto_save?: boolean };
 
   try {
     body = await req.json();
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { audience_id, brand_name, brief } = body;
+  const { audience_id, brand_name, brief, auto_save = true } = body;
 
   if (!audience_id) {
     return NextResponse.json(
@@ -186,19 +186,28 @@ export async function POST(req: NextRequest) {
           span.setAttribute('output.rya_score', object.rya_score);
           span.setAttribute('output.genres_cited', (groundResult.cited ?? []).join(', '));
 
+          // Build output payload
+          const outputPayload = {
+            output_type: 'campaign_concept' as const,
+            audience_id,
+            title: object.title,
+            content: object,
+            rya_score: object.rya_score,
+            rya_rationale: object.rya_rationale,
+            channel: object.channel,
+            genre_signals_used: object.genre_signals_used,
+          };
+
+          if (!auto_save) {
+            span.setStatus({ code: SpanStatusCode.OK });
+            span.end();
+            return NextResponse.json(outputPayload, { status: 200 });
+          }
+
           // Save to saved_outputs
           const { data: saved, error: saveError } = await supabase
             .from('saved_outputs')
-            .insert({
-              output_type: 'campaign_concept',
-              audience_id,
-              title: object.title,
-              content: object,
-              rya_score: object.rya_score,
-              rya_rationale: object.rya_rationale,
-              channel: object.channel,
-              genre_signals_used: object.genre_signals_used,
-            })
+            .insert(outputPayload)
             .select()
             .single();
 

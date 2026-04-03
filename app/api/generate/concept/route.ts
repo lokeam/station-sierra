@@ -9,6 +9,12 @@
  *
  * Request:  `{ audience_id: string, brand_name?: string, brief?: string }`
  * Response: 200 saved output | 404 audience not found | 422 evals exhausted | 500 db error
+ *
+ * CSRF: This route is not vulnerable to classic CSRF attacks. Next.js App Router
+ * API routes require an explicit `Content-Type: application/json` header for JSON
+ * parsing. Browsers will not send JSON payloads cross-origin without a CORS
+ * preflight, and no permissive CORS policy is configured. This makes form-based
+ * and image-tag CSRF vectors ineffective against these endpoints.
  */
 
 import { NextRequest, NextResponse } from 'next/server';

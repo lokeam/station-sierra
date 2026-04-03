@@ -1,13 +1,24 @@
-export default function AudiencesPage() {
+import { createServiceClient } from '@/lib/supabase';
+import { AudienceList } from '../components/audience-list';
+
+export default async function AudiencesPage() {
+  const supabase = createServiceClient();
+
+  const [
+    { data: audiences },
+    { data: genres },
+    { data: interests },
+  ] = await Promise.all([
+    supabase.from('audiences').select('id, name, respondent_ids, created_at').order('created_at', { ascending: false }),
+    supabase.from('genres').select('genre_slug, genre_name').order('genre_name'),
+    supabase.from('respondent_genre_interest').select('respondent_id, genre_slug, interest_level'),
+  ]);
+
   return (
-    <div className="flex flex-1 items-center justify-center">
-      <div className="text-center">
-        <div className="text-4xl mb-4 text-muted-foreground">&#9673;</div>
-        <h2 className="text-lg font-semibold mb-2">No audiences yet.</h2>
-        <p className="text-sm text-muted-foreground">
-          Build a segment from respondent data to get started.
-        </p>
-      </div>
-    </div>
+    <AudienceList
+      audiences={audiences ?? []}
+      genres={genres ?? []}
+      interests={interests ?? []}
+    />
   );
 }

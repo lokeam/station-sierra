@@ -9,6 +9,12 @@
 
 import type { GenreSignal } from './types';
 
+/**
+ * Shared system prompt injected into every generateObject() call.
+ * Sets the LLM's role (marketing strategist), explains the inverted
+ * interest scale (1 = highest), and enforces the grounding rule:
+ * every claim must cite a genre name and score.
+ */
 export const SYSTEM_PROMPT = `You are a senior marketing strategist at a creative agency.
 You specialize in translating quantitative audience data into
 defensible creative direction.

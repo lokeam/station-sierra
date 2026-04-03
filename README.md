@@ -2,15 +2,14 @@
 
 **AI-Powered Audience Intelligence for Campaign Strategists**
 
-> Turn survey respondent data into grounded campaign concepts and audience personas in seconds — with every creative output citing the actual genre signals that inspired it.
+> Turn survey respondent data 📊 into grounded campaign concepts 💡 and audience personas in seconds 🌟🦿 — with every creative output citing the actual genre signals that inspired it.
 
 ## Screenshots
-
-<img width="668" alt="Station Sierra landing page" src="" />
-<img width="668" alt="Station Sierra respondent explorer" src="" />
-<img width="668" alt="Station Sierra audience detail with delta visualization" src="" />
-<img width="668" alt="Station Sierra generated campaign concept" src="" />
-<img width="668" alt="Station Sierra Phoenix observability traces" src="" />
+<img width="668" alt="Station Sierra landing page" src="https://github.com/user-attachments/assets/94083802-aa4b-44b6-9552-b80456cef84c" />
+<img width="668" alt="Station Sierra respondent explorer" src="https://github.com/user-attachments/assets/3131a6c5-5372-4adc-8646-e3d29845d2c2" />
+<img width="668" alt="Station Sierra audience detail with delta visualization" src="https://github.com/user-attachments/assets/a0508579-504d-4269-8409-657b0cb4afbe" />
+<img width="668" alt="Station Sierra generated campaign concept" src="https://github.com/user-attachments/assets/275c2ec2-1f21-4bb4-b853-c6d64037da6f" />
+<img width="668" alt="Station Sierra Phoenix observability traces" src="https://github.com/user-attachments/assets/4044544b-28ac-4f6a-990f-c319d5c11be6" />
 
 ## What This Does
 

@@ -23,12 +23,14 @@ export default async function ConceptDetailPage({ params }: ConceptDetailPagePro
   // Fetch audience info
   let audience = null;
   if (output.audience_id) {
-    const { data: audienceData } = await supabase
+    const { data: audienceData, error: audienceError } = await supabase
       .from('audiences')
       .select('id, name, respondent_ids, filter_definition')
       .eq('id', output.audience_id)
       .single();
-    audience = audienceData;
+    if (!audienceError) {
+      audience = audienceData;
+    }
   }
 
   return (

@@ -243,10 +243,13 @@ export async function POST(req: NextRequest) {
     } catch (err) {
       span.setStatus({
         code: SpanStatusCode.ERROR,
-        message: err instanceof Error ? err.message : 'Unknown error',
+        message: 'An unexpected error occurred',
       });
       span.end();
-      throw err;
+      return NextResponse.json(
+        { error: 'internal_error', detail: 'An unexpected error occurred' },
+        { status: 500 }
+      );
     }
   });
 }

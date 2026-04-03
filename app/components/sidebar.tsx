@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Logo } from './logo';
 import { ThemeToggle } from './theme-toggle';
 
 interface SidebarProps {
@@ -21,7 +22,10 @@ export function Sidebar({ respondentCount, genreCount }: SidebarProps) {
   return (
     <aside className="flex flex-col w-56 shrink-0 border-r border-border bg-muted/50 h-full">
       <div className="flex items-center justify-between px-4 h-14 border-b border-border">
-        <span className="font-semibold text-sm tracking-tight">RYA Lite</span>
+        <div className="flex items-center gap-2">
+          <Logo />
+          <span className="font-semibold text-sm tracking-tight">RYA Lite</span>
+        </div>
         <ThemeToggle />
       </div>
 

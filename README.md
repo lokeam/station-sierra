@@ -5,7 +5,7 @@
 > Turn survey respondent data 📊 into grounded campaign concepts 💡 and audience personas in seconds 🌟🦿 — with every creative output citing the actual genre signals that inspired it.
 
 ## Screenshots
-<img width="668" alt="Station Sierra landing page" src="https://github.com/user-attachments/assets/94083802-aa4b-44b6-9552-b80456cef84c" />
+<img width="668" alt="Station Sierra landing page" src="https://github.com/user-attachments/assets/df3c611e-7aa3-4b71-80e5-bdf7ae3b29d9" />
 <img width="668" alt="Station Sierra respondent explorer" src="https://github.com/user-attachments/assets/3131a6c5-5372-4adc-8646-e3d29845d2c2" />
 <img width="668" alt="Station Sierra audience detail with delta visualization" src="https://github.com/user-attachments/assets/a0508579-504d-4269-8409-657b0cb4afbe" />
 <img width="668" alt="Station Sierra generated campaign concept" src="https://github.com/user-attachments/assets/275c2ec2-1f21-4bb4-b853-c6d64037da6f" />
